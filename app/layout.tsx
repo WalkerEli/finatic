@@ -1,6 +1,8 @@
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Navbar from "./components/navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,16 +16,26 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Finatic",
-  description: "Our main goal is to make budgeting easier to understand for all groups of people. This app will intend to help users understand where there money is going and help them either save or invest more. ",
+  description:
+    "Finatic makes budgeting easier to understand by helping users track spending, manage savings, and make informed financial decisions.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} min-h-screen flex flex-col antialiased`}
+      >
+        <Navbar />
+
+        <main className="flex-1">
+          {children}
+        </main>
+      </body>
     </html>
   );
 }
