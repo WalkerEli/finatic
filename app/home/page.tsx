@@ -1,6 +1,3 @@
-// Finatic dashboard preview.
-// All amounts are sample values for UI testing; no database or API is required.
-
 type Transaction = {
   name: string;
   category: string;
@@ -112,9 +109,6 @@ export default function Home() {
               A simple view of your money, spending, and goals.
             </p>
           </div>
-          <span className="w-fit rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-500">
-            Demo data · No database connected
-          </span>
         </header>
 
         {/* Welcome banner */}
