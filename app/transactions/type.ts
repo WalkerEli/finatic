@@ -1,3 +1,4 @@
+
 export type Transaction = {
   transaction_id: string;
   account_id: string;
@@ -5,7 +6,7 @@ export type Transaction = {
   merchant_name: string | null;
   amount: number;
   iso_currency_code: string | null;
-  date: string; // YYYY-MM-DD
+  date: string;
   pending: boolean;
   personal_finance_category: {
     primary: string;
@@ -24,4 +25,6 @@ export type TransactionHistory = {
   accounts: BankAccount[];
   demo: boolean;
   updatedAt: string | null;
+  connected?: boolean;
+  warnings?: string[];
 };

@@ -1,4 +1,6 @@
+
 {
+  "$schema": "https://json.schemastore.org/package",
   "name": "finatic",
   "version": "0.1.0",
   "private": true,
@@ -6,7 +8,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "setup:dev": "node scripts/setup-dev.mjs"
   },
   "dependencies": {
     "dotenv": "^18.0.9",
@@ -18,7 +21,10 @@
     "next": "^16.4.4",
     "plaid": "^50.0.0",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "server-only": "^0.0.1",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^6.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
