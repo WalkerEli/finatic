@@ -1,19 +1,17 @@
-import plaid, {
+import {
     ItemPublicTokenExchangeRequest,
     AccountsGetRequest,
     LinkTokenCreateRequest,
     TransactionsGetRequest,
     TransactionsRefreshRequest,
-} from 'plaid';
-
-import {
     Products,
     CountryCode,
     AccountsGetResponse,
     TransactionsGetResponse
-} from 'plaid'
+    
+} from 'plaid';
 
-import plaidClient from '../models/client'
+import plaidClient from '../models/client';
 
 class APIPlaid{
     public async link_token_create(userId: string): Promise<string>{
@@ -87,7 +85,7 @@ class APIPlaid{
             }
 
             const response = await plaidClient.transactionsGet(request);
-            let transactions = response.data.transactions;
+            transactions = response.data.transactions;
             const total_transactions = response.data.total_transactions;
 
             // Manipulate the offset parameter to paginate
@@ -126,3 +124,5 @@ class APIPlaid{
         }
     }
 }
+
+export default APIPlaid;
