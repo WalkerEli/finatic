@@ -40,10 +40,17 @@ export default async function Navbar() {
           >
             Dashboard
           </Link>
+          <Link
+            href="/transactions"
+            className="rounded-lg px-2 py-2 text-sm font-medium text-slate-600 transition hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 sm:px-3"
+          >
+            Transactions History
+          </Link>
 
           {isAuthenticated ? (
             // Navigation for logged-in users
             <div className="flex items-center gap-2">
+              
               <Link
                 href="/profile"
                 className="rounded-lg px-2 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50"
