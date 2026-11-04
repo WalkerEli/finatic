@@ -1,22 +1,22 @@
-
-import "server-only";
-
 import {
     ItemPublicTokenExchangeRequest,
     AccountsGetRequest,
     LinkTokenCreateRequest,
     TransactionsGetRequest,
     TransactionsRefreshRequest,
-} from "plaid";
-
-import {
     Products,
     CountryCode,
     AccountsGetResponse,
-    TransactionsGetResponse,
-} from "plaid";
+    TransactionsGetResponse
+    
+} from 'plaid';
 
-import { plaidClient } from "@/app/api/transactions/plaid-client";
+import plaidClient from '../models/client';
+
+class APIPlaid{
+    public async link_token_create(userId: string): Promise<string>{
+        // Account filtering isn't required here, but sometimes 
+        // it's helpful to see an example. 
 
 export default class APIPlaid {
     public async link_token_create(userId: string): Promise<string> {
@@ -89,16 +89,34 @@ export default class APIPlaid {
                 end_date: endDate,
                 options: {
                     count: 500,
-                    offset: transactions.length,
-                },
-            };
+                    offset: 0
+                }
+            }
 
-            const paginatedResponse =
-                await plaidClient().transactionsGet(paginatedRequest);
+            const response = await plaidClient.transactionsGet(request);
+            transactions = response.data.transactions;
+            const total_transactions = response.data.total_transactions;
 
-            transactions = transactions.concat(
-                paginatedResponse.data.transactions
-            );
+            // Manipulate the offset parameter to paginate
+            // transactions and retrieve all available data
+            while (transactions.length < total_transactions) {
+                const paginatedRequest: TransactionsGetRequest = {
+                    access_token: accessToken,
+                    start_date: startDate,
+                    end_date: endDate,
+                    options: {
+                        count: 500,
+                        offset: transactions.length
+                    }
+                };
+                const paginatedResponse = await plaidClient.transactionsGet(paginatedRequest);
+                transactions = transactions.concat(paginatedResponse.data.transactions);
+            }
+
+            return transactions;
+
+        } catch (error) {
+            throw error;
         }
 
         return transactions;
@@ -114,3 +132,5 @@ export default class APIPlaid {
         await plaidClient().transactionsRefresh(request);
     }
 }
+
+export default APIPlaid;

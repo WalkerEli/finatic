@@ -12,6 +12,7 @@
     "setup:dev": "node scripts/setup-dev.mjs"
   },
   "dependencies": {
+    "dotenv": "^18.0.9",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
     "bcryptjs": "^3.0.3",
