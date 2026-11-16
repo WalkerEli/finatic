@@ -1,6 +1,7 @@
 "use client";
 
 import FinaticLogo from "../components/finac-logo";
+import NotificationService from "../services/notification-service";
 import { useState, type FormEvent } from "react";
 
 type LoginResponse = {
@@ -10,6 +11,7 @@ type LoginResponse = {
 const SHOW_DEMO_LOGIN =
   process.env.NODE_ENV === "development" &&
   process.env.NEXT_PUBLIC_ENABLE_DEMO_LOGIN === "true";
+
 const DEMO_EMAIL = "demo@finatic.test";
 const DEMO_PASSWORD = "Finatic123!";
 
@@ -18,11 +20,9 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setError("");
     setIsSubmitting(true);
 
     try {
@@ -45,6 +45,7 @@ export default function Login() {
         if (response.status === 404) {
           throw new Error("The login API has not been connected yet.");
         }
+
         throw new Error(
           response.status === 401
             ? "Incorrect email or password. Please try again."
@@ -52,13 +53,23 @@ export default function Login() {
         );
       }
 
+      try {
+        sessionStorage.setItem(
+          "finatic:flash",
+          "You have successfully signed in to Finatic."
+        );
+      } catch {
+        NotificationService("Login successful.", "success");
+      }
+
       window.location.assign("/");
     } catch (err) {
-      setError(
+      const message =
         err instanceof Error
           ? err.message
-          : "A network error occurred. Please try again."
-      );
+          : "A network error occurred. Please try again.";
+
+      NotificationService(message, "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -81,19 +92,25 @@ export default function Login() {
                 priority
               />
             </div>
+
             <p className="mb-3 text-sm font-semibold tracking-widest text-cyan-200 uppercase">
               Your finances, simplified
             </p>
+
             <h1 className="max-w-sm text-4xl leading-tight font-bold tracking-tight">
               Take control of your financial future.
             </h1>
+
             <p className="mt-5 max-w-sm text-base leading-7 text-blue-100">
               Keep your spending, savings, and investments organized in one place.
             </p>
           </div>
 
           <div className="relative mt-20 rounded-2xl border border-white/20 bg-white/10 p-6 backdrop-blur-sm">
-            <p className="text-lg font-semibold">One dashboard. More clarity.</p>
+            <p className="text-lg font-semibold">
+              One dashboard. More clarity.
+            </p>
+
             <p className="mt-2 text-sm leading-6 text-blue-100">
               Understand where your money goes and make decisions with confidence.
             </p>
@@ -111,37 +128,19 @@ export default function Login() {
             />
           </div>
 
-          <p className="text-sm font-semibold text-blue-700">WELCOME BACK</p>
+          <p className="text-sm font-semibold text-blue-700">
+            WELCOME BACK
+          </p>
+
           <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
             Sign in to Finatic
           </h2>
+
           <p className="mt-3 text-sm leading-6 text-slate-500">
             Enter your account details to access your dashboard.
           </p>
 
-          {SHOW_DEMO_LOGIN && (
-            <div className="mt-7 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
-              <p className="font-semibold">Development demo — no database needed</p>
-              <p className="mt-2 break-all">
-                Email: <span className="font-mono">{DEMO_EMAIL}</span>
-              </p>
-              <p className="mt-1">
-                Password: <span className="font-mono">{DEMO_PASSWORD}</span>
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  setEmail(DEMO_EMAIL);
-                  setPassword(DEMO_PASSWORD);
-                  setError("");
-                }}
-                className="mt-3 font-semibold text-blue-700 underline underline-offset-2 hover:text-blue-900"
-              >
-                Fill demo credentials
-              </button>
-            </div>
-          )}
-
+          
           <form onSubmit={handleSubmit} className="mt-9 space-y-6">
             <div>
               <label
@@ -150,6 +149,7 @@ export default function Login() {
               >
                 Email address
               </label>
+
               <input
                 id="login-email"
                 name="email"
@@ -171,6 +171,7 @@ export default function Login() {
               >
                 Password
               </label>
+
               <div className="relative">
                 <input
                   id="login-password"
@@ -184,6 +185,7 @@ export default function Login() {
                   onChange={(event) => setPassword(event.target.value)}
                   className="block w-full rounded-xl border border-slate-300 bg-white px-4 py-3 pr-20 text-sm outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 disabled:opacity-60"
                 />
+
                 <button
                   type="button"
                   onClick={() => setShowPassword((current) => !current)}
@@ -195,15 +197,6 @@ export default function Login() {
                 </button>
               </div>
             </div>
-
-            {error && (
-              <p
-                role="alert"
-                className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-              >
-                {error}
-              </p>
-            )}
 
             <button
               type="submit"
