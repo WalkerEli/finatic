@@ -18,72 +18,63 @@ class APIPlaid{
         // Account filtering isn't required here, but sometimes 
         // it's helpful to see an example. 
 
-export default class APIPlaid {
-    public async link_token_create(userId: string): Promise<string> {
         const request: LinkTokenCreateRequest = {
             user: {
                 client_user_id: userId,
             },
-            client_name: "Personal Finance App",
+            client_name: 'Personal Finance App',
             products: [Products.Transactions],
             country_codes: [CountryCode.Us],
-            language: "en",
+            language: 'en'
         };
 
-        const response = await plaidClient().linkTokenCreate(request);
-
-        return response.data.link_token;
+        try {
+            const response = await plaidClient.linkTokenCreate(request);
+            return response.data.link_token;
+        } catch (error) {
+            throw error;
+        }
     }
-
-    public async public_token_exchange(
-        publicToken: string
-    ): Promise<{ accessToken: string; itemId: string }> {
+    
+    public async public_token_exchange(publicToken: string): Promise<{accessToken: string; itemId: string}>{
         const request: ItemPublicTokenExchangeRequest = {
-            public_token: publicToken,
+        public_token: publicToken,
         };
 
-        const response = await plaidClient().itemPublicTokenExchange(request);
+        try {
+            const response = await plaidClient.itemPublicTokenExchange(request);
+            const accessToken = response.data.access_token;
+            const itemId = response.data.item_id;
 
-        return {
-            accessToken: response.data.access_token,
-            itemId: response.data.item_id,
-        };
+            return {
+                accessToken,
+                itemId
+            }
+        } catch (error) {
+            throw error;
+        }
     }
 
-    public async accounts_get(
-        accessToken: string
-    ): Promise<AccountsGetResponse["accounts"]> {
+    public async accounts_get(accessToken: string): Promise<AccountsGetResponse['accounts']>{
         const request: AccountsGetRequest = {
-            access_token: accessToken,
+             access_token: accessToken
         };
 
-        const response = await plaidClient().accountsGet(request);
-
-        return response.data.accounts;
+        try {
+            const response = await plaidClient.accountsGet(request);
+            
+            const accounts = response.data.accounts;
+            return accounts;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    public async transactions_get(
-        accessToken: string,
-        startDate: string,
-        endDate: string
-    ): Promise<TransactionsGetResponse["transactions"]> {
-        const request: TransactionsGetRequest = {
-            access_token: accessToken,
-            start_date: startDate,
-            end_date: endDate,
-            options: {
-                count: 500,
-                offset: 0,
-            },
-        };
+    public async transactions_get(accessToken: string, startDate: string, endDate: string): Promise<TransactionsGetResponse['transactions']>{
+        let transactions: TransactionsGetResponse['transactions'] = [];
 
-        const response = await plaidClient().transactionsGet(request);
-
-        let transactions = response.data.transactions;
-        const totalTransactions = response.data.total_transactions;
-
-        while (transactions.length < totalTransactions) {
-            const paginatedRequest: TransactionsGetRequest = {
+        try {
+            const request: TransactionsGetRequest = {
                 access_token: accessToken,
                 start_date: startDate,
                 end_date: endDate,
@@ -118,18 +109,19 @@ export default class APIPlaid {
         } catch (error) {
             throw error;
         }
-
-        return transactions;
     }
 
-    public async transactions_refresh(
-        accessToken: string
-    ): Promise<void> {
+    public async transactions_refresh(accessToken: string): Promise<void>{
         const request: TransactionsRefreshRequest = {
             access_token: accessToken,
         };
 
-        await plaidClient().transactionsRefresh(request);
+        try {
+            await plaidClient.transactionsRefresh(request);
+            
+        } catch (error) {
+            throw error;
+        }
     }
 }
 
