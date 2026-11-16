@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import PlaidLinkButton from "@/app/components/plaid-link-button";
 import { withDb } from "@/lib/db";
